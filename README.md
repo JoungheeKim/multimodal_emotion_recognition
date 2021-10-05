@@ -1,5 +1,8 @@
 # Multi-modal Korean Emotion Recognition with consistency regularization
-This is pytorch implementation of the paper, "Multi-modal Korean Emotion Recognition with consistency regularization" which is applied to [Korean Institute of Industrial Engineers(KIIE)](http://kiie.org/).
+This is pytorch implementation of the paper, "Multi-modal Korean Emotion Recognition with consistency regularization" which is submitted to [Korean Institute of Industrial Engineers(KIIE)](http://kiie.org/).
+
+## Dataset
+We experiment our model with [`Multi-modal Video Dataset`](https://aihub.or.kr/aidata/137) released from [AIhub](AIhub)
 
 ## Install
 ### Docker
