@@ -1,0 +1,30 @@
+GPU_NUM=0
+DATA_PATH=/code/gitRepo/sentiment_speech//modified/preprocess/kakao/multimodal_small/
+LABEL_CLASS=multi6
+BATCH_SIZE=2
+HEAD_NUM=10
+NUM_LAYERS=8
+LEARNING_RATE=5e-5
+INDEX=0
+
+python src/train.py \
+    model=lm_transformer \
+    audio_feature=except \
+    language_feature=hantoken \
+    language_feature.column_name=text \
+    language_feature.bert_path=/code/gitRepo/sentiment_speech//pretrained_model/HanBert-54kN-torch \
+    base.data_path=${DATA_PATH}/multimodal_small${INDEX}.pkl \
+    base.save_path=/code/gitRepo/sentiment_speech//results/google/raw_token_transformer_lm \
+    base.experiments_path=/code/gitRepo/sentiment_speech/experiment/plan/google/${LABEL_CLASS}/language_transformer_text_${LABEL_CLASS}.csv \
+    base.num_train_epochs=5 \
+    base.learning_rate=5e-5 \
+    base.gradient_accumulation_steps=2 \
+    base.train_batch_size=${BATCH_SIZE} \
+    base.eval_batch_size=${BATCH_SIZE} \
+    model.num_layers=0 \
+    model.use_bert=True \
+    model.finetune_bert=True \
+    model.last_hidden=True \
+    base.logging_steps=200 \
+    label=${LABEL_CLASS} \
+    label.loss_type=cross
