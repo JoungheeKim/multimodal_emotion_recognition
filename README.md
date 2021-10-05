@@ -5,10 +5,10 @@ This is pytorch implementation of the paper, "Multi-modal Korean Emotion Recogni
 We experiment our model with [`Multi-modal Video Dataset`](https://aihub.or.kr/aidata/137) released from [AIhub](AIhub)
 
 ## Install
-### Docker
+### 1. Docker
 We support `Dockerfile` to build virtual environment to run our system.
 
-### Fairseq Install
+### 2. Fairseq Install
 Our system use Wav2vec 2.0 released by `fairseq`.
 Therefore, it is necessary to install fairseq system before install our system.
 ```bash
@@ -17,7 +17,7 @@ cd fairseq
 pip install --editable ./
 ```
 
-### Basic Requirement
+### 3. Basic Requirement
 ```bash
 ## OS Library for audio
 apt-get install libsndfile1-dev
@@ -36,16 +36,15 @@ pip install transformers
 pip install torchaudio==0.7.2
 ```
 
-### Sentiment Speech Install
+### 4. Install our system
 Install 
 ```bash
+git clone https://github.com/JoungheeKim/multimodal_emotion_recognition.git
+cd multimodal_emotion_recognition
 python setup.py develop
 ```
 
-### Environment
-- requirement.txt 참고
-
-### preprocessing
+## preprocessing
 - `./src/configs/iemocap_preproc.yaml`
     - use_bert: True: 텍스트모덜 벡터로 BERT last encoder layer 사용, 아니면 glove vectors사용
     - use_wav2vec2: 오디오모덜 벡터로 Wav2vec2.0 last encoder layer 사용, 아니면 MFCC vectors사용
