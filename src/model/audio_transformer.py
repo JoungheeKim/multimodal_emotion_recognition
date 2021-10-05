@@ -19,7 +19,8 @@ class AudioTransformerConfig(AudioModelConfig):
     last_hidden: bool = False
     max_pool: bool = False
     kernel_size: int = 3
-    use_kernel:bool = True
+    proj_layer:str=''
+
 
 class AudioTransformerModel(AudioModel):
     def __init__(self, model_cfg:AudioTransformerConfig, feature_cfg:AudioFeatureConfig, label_cfg:LabelPreprocessConfig):
@@ -29,16 +30,23 @@ class AudioTransformerModel(AudioModel):
             padding = (dilation * (kernel_size - 1)) / 2
             return int(padding)
 
-        assert model_cfg.kernel_size % 2 == 1, "kernel은 항상 홀수여야 함 다시 확인하세요".format(model_cfg.lm_kernel_size)
-        padding = calculate_padding(model_cfg.kernel_size)
-
-        hidden_dim = model_cfg.hidden_dim
-        self.encoder = nn.Conv1d(self.encoder_dim, hidden_dim, kernel_size=model_cfg.kernel_size, padding=padding, bias=False)
-        self.use_kernel = model_cfg.use_kernel
-
-        hidden_dim = hidden_dim if self.use_kernel else self.encoder_dim
+        hidden_dim = self.encoder_dim
+        self.proj_layer = model_cfg.proj_layer
+        if self.proj_layer == 'conv':
+            assert model_cfg.kernel_size % 2 == 1, "kernel은 항상 홀수여야 함 다시 확인하세요".format(model_cfg.kernel_size)
+            padding = self._calculate_padding(model_cfg.kernel_size)
+            self.audio_porj = nn.Conv1d(self.encoder_dim, model_cfg.hidden_dim,
+                                       kernel_size=model_cfg.kernel_size,
+                                       padding=padding, bias=False)
+            hidden_dim = model_cfg.hidden_dim
+        elif self.proj_layer == 'linear':
+            self.audio_porj = nn.Linear(self.encoder_dim, model_cfg.hidden_dim)
+            hidden_dim = model_cfg.hidden_dim
         
         self.layers = nn.ModuleList([])
+
+        #print("hidden_dim", hidden_dim)
+        #print("encoder_dim", self.encoder_dim)
 
         #self.encoder_norm = LayerNorm(self.encoder_dim)
         for layer in range(model_cfg.num_layers):
@@ -53,47 +61,51 @@ class AudioTransformerModel(AudioModel):
         self.max_pool = model_cfg.max_pool
 
     def forward(self, audio, padding_mask=None, **kwargs):
-        audio, padding_mask = self.w2v_encoding(audio, padding_mask)
 
-        if self.use_kernel:
-            # for conv, (B, L, D) => (B, D, L)
-            audio = audio.transpose(1, 2)
-            # (B, d, L) => (B, L, d)
-            audio = self.encoder(audio).transpose(1, 2)
+        ## Audio
+        outputs, padding_mask = self.w2v_encoding(audio, padding_mask)
 
-        #print("padding_mask.shape", padding_mask.shape)
-        if len(padding_mask.shape)>2:
-            padding_mask=padding_mask[:,:,0]
+        if hasattr(self, 'audio_porj'):
+            if type(self.audio_porj) == nn.Conv1d:
+                # for conv, (B, L, D) => (B, D, L)
+                outputs = outputs.transpose(1, 2)
+                # (B, d, L) => (B, L, d)
+                outputs = self.audio_porj(outputs).transpose(1, 2)
+            else:
+                outputs = self.audio_porj(outputs)
+
+        ## Calculate Padding
+        if len(padding_mask.shape) > 2:
+            padding_mask = padding_mask[:, :, 0]
         audio_pad_true_mask = padding_mask.bool() if padding_mask is not None else None
-        audio_pad_false_mask = (padding_mask==0).bool() if padding_mask is not None else None
-
+        audio_pad_false_mask = (padding_mask == 0) if padding_mask is not None else None
+        
         # for conv, (B, L, D) => (L, B, D)
-        audio = audio.transpose(0, 1)
+        outputs = outputs.transpose(0, 1)
 
         for layer in self.layers:
-            audio = layer(audio, src_key_padding_mask=audio_pad_true_mask)
+            outputs = layer(outputs, src_key_padding_mask=audio_pad_true_mask)
 
         # for conv, (L, B, D) => (B, L, D)
-        audio = audio.transpose(0, 1)
+        outputs = outputs.transpose(0, 1)
+
+        #print('audio_pad_false_mask', audio_pad_false_mask)
+        #print('audio_pad_true_mask', audio_pad_true_mask)
+
 
         if not self.last_hidden:
-            def masked_mean(tensor_x, mask=None, dim=0):
-                if mask is None:
-                    return tensor_x.mean(dim=dim)
-                mask = mask.unsqueeze(2)
-                masked = tensor_x * mask  # Apply the mask using an element-wise multiply
-                return masked.sum(dim=dim) / mask.sum(dim=dim)  # Find the average!
-            audio = masked_mean(audio, audio_pad_false_mask, dim=1)
+            outputs = self._masked_mean(outputs, audio_pad_false_mask, dim=1)
         else:
             # (bat, dim)
-            audio = audio[:,0,:]
+            outputs = outputs[:,0,:]
 
-        audio = self.final_dropout(audio)
-        output = self.proj(audio)
+        #print("outputs1", outputs.shape)
+
+        outputs = self.final_dropout(outputs)
+        outputs = self.proj(outputs)
 
         return {
-            'output': output,
-            'padding_mask': padding_mask,
+            'output': outputs,
         }
 
     def get_logits(self, net_output):

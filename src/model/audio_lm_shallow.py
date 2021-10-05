@@ -107,7 +107,7 @@ class AudioLanguageShallowModel(AudioLanguageModel):
                 audio_encoding = self.audio_porj(audio_encoding)
 
         ## Calculate Padding
-        if len(padding_mask.shape) > 2:
+        if padding_mask is not None and len(padding_mask.shape) > 2:
             padding_mask = padding_mask[:, :, 0]
         audio_pad_true_mask = padding_mask.bool() if padding_mask is not None else None
         audio_pad_false_mask = (padding_mask == 0) if padding_mask is not None else None
@@ -130,7 +130,7 @@ class AudioLanguageShallowModel(AudioLanguageModel):
                 text_encoding = self.text_proj(text_encoding)
 
         ## Calculate Padding
-        if len(attention_mask.shape) > 2:
+        if attention_mask is not None and len(attention_mask.shape) > 2:
             attention_mask = attention_mask[:, :, 0]
         text_pad_true_mask = (attention_mask == 0) if attention_mask is not None else None
         text_pad_false_mask = attention_mask.bool() if attention_mask is not None else None

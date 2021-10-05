@@ -42,7 +42,7 @@ class LanguageModel(Pretrained_model):
 
         ## set feature base attribute
         self.feature_dim = feature_cfg.feature_dim
-
+        
         ## set label base attribtue
         self.num_class = len(eval(label_cfg.selected_class))
 
@@ -86,10 +86,10 @@ class LanguageModel(Pretrained_model):
     @classmethod
     def load_with_config(cls, cfg):
         model_cfg = cfg.model
-        audio_feature_cfg = cfg.audio_feature
+        language_feature_cfg = cfg.language_feature
         label_cfg = cfg.label
 
-        model = cls(model_cfg, audio_feature_cfg, label_cfg)
+        model = cls(model_cfg, language_feature_cfg, label_cfg)
         model.set_config(cfg)
         return model
 

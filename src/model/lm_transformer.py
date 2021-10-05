@@ -20,7 +20,7 @@ class LMTransformerConfig(LanguageModelConfig):
     max_pool: bool = False
     kernel_size: int = 3
     proj_layer:str=''
-    
+        
 
 
 class LMTransformerModel(LanguageModel):
@@ -67,6 +67,10 @@ class LMTransformerModel(LanguageModel):
         }
 
     def process(self, input_ids, token_type_ids=None, attention_mask=None, **kwargs):
+
+        #print("input_ids", input_ids.shape)
+        
+
         outputs = self.bert_encoding(input_ids=input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask)
 
         if hasattr(self, 'text_proj'):
@@ -90,20 +94,32 @@ class LMTransformerModel(LanguageModel):
         # for transformer, (B, L, D) => (L, B, D)
         outputs = outputs.transpose(0, 1)
 
+        #print("outputs0", outputs.shape)
+
         for layer in self.layers:
             outputs = layer(outputs, src_key_padding_mask=text_pad_true_mask)
+            #outputs = layer(outputs, src_key_padding_mask=text_pad_false_mask)
 
         # for transformer, (L, B, D) => (B, L, D)
         outputs = outputs.transpose(0, 1)
 
+
+        #print("text_pad_false_mask", text_pad_false_mask)
+        #print("text_pad_true_mask", text_pad_true_mask)
+
         if not self.last_hidden:
             outputs = self._masked_mean(outputs, text_pad_false_mask, dim=1)
+            #outputs = self._masked_mean(outputs, text_pad_true_mask, dim=1)
         else:
             # (bat, dim)
             outputs = outputs[:,0,:]
 
+        #print("outputs1", outputs.shape)
+
         outputs = self.final_dropout(outputs)
         outputs = self.proj(outputs)
+
+        #print("outputs2", outputs.shape)
 
         return outputs
 
