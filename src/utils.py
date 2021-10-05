@@ -22,7 +22,7 @@ from hydra.core.config_store import ConfigStore
 from src.process.label_preprocess import FiveLabelPreprocessConfig, SevenLabelPreprocessConfig, Multimodal8PreprocessConfig, Multimodal7PreprocessConfig, Multimodal6PreprocessConfig, Multimodal4PreprocessConfig, Multimodal5PreprocessConfig, Synthesis7PreprocessConfig
 from src.process.split_preprocess import SplitPreprocessConfig
 from src.dataset.audio_dataset import MfccFeatureConfig, AudioFeatureConfig, Wav2vecFeatureConfig, VQTokenFeatureConfig, VQWav2vecFeatureConfig, MelFeatureConfig, ExceptFeatureConfig
-from src.dataset.language_dataset import HanBertFeatureConfig, HanTokenFeatureConfig, LanguageFeatureConfig
+from src.dataset.language_dataset import HanBertFeatureConfig, HanTokenFeatureConfig, LanguageFeatureConfig, FasttextFeatureConfig
 from src.speech_to_text.kakao_api import KaKaoConfig
 from src.speech_to_text.google_api import GoogleConfig
 from src.speech_to_text.clova_api import ClovaConfig
@@ -41,7 +41,7 @@ from src.model.audio_lm_deep import AudioLanguageDeepConfig
 from src.model.audio_lm_deep_pointer import AudioLanguageDeepPointerConfig
 from src.model.audio_lm_deep_pointer_ver2 import AudioLanguageDeepPointerV2Config
 
-from src.configs import TrainConfig, PreprocessConfig, CallAPIConfig
+from src.configs import TrainConfig, PreprocessConfig, CallAPIConfig, EvalConfig
 
 from src.configs import DefaultConfig
 
@@ -52,6 +52,7 @@ def init():
 
     ## base
     cs.store(group="base", name='train', node=TrainConfig)
+    cs.store(group="base", name='eval', node=EvalConfig)
     cs.store(group="base", name='preprocess', node=PreprocessConfig)
     cs.store(group="base", name='api', node=CallAPIConfig)
 
@@ -86,6 +87,7 @@ def init():
     cs.store(group="language_feature", name="raw", node=LanguageFeatureConfig)
     cs.store(group="language_feature", name="hanbert", node=HanBertFeatureConfig)
     cs.store(group="language_feature", name="hantoken", node=HanTokenFeatureConfig)
+    cs.store(group="language_feature", name="fasttext", node=FasttextFeatureConfig)
 
     ## split
     cs.store(group="split", name="three", node=SplitPreprocessConfig)
