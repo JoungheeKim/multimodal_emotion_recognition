@@ -92,6 +92,12 @@ class LanguageProcessor(BaseProcessor):
                 config.bert_path)
             self.tokenizer = HanBertTokenizer.from_pretrained(config.bert_path)
 
+        elif self.feature_name == 'fasttext':
+            assert config.vocab_path != '' and config.model_path is not None, 'Fasttext 모델이 저장된 폴더 또는 이름을 정확히 다시한번 확인해 보세요. [{}]'.format(
+                config.model_path)
+
+            self.tokenizer = Word2Vec(config.vocab_path, config.model_path, method=config.method, tokenizer_name=config.tokenizer_name)
+
         else:
             raise ValueError('Need to add audio feature [{}]'.format(config.name))
 
@@ -112,6 +118,10 @@ class LanguageProcessor(BaseProcessor):
             return outputs.squeeze(0).cpu().numpy()
 
         if self.feature_name == 'hantoken':
+            tokens = self.tokenizer.encode(data)
+            return np.array(tokens)
+
+        if self.feature_name == 'fasttext':
             tokens = self.tokenizer.encode(data)
             return np.array(tokens)
 

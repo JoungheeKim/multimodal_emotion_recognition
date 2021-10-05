@@ -226,10 +226,11 @@ class SentimentDataset(Dataset):
             channel = tokens[0].shape[1] if len(tokens[0].shape) > 1 else False
             sizes = [len(s) for s in tokens]
             target_size = min(max(sizes), self.max_language_size)
+            #print("channel 머냐?", channel)
             if channel:
                 input_ids = torch.zeros(len(tokens), target_size, channel)
                 attention_mask = (
-                    torch.BoolTensor(input_ids.shape[:2]).fill_(False)
+                    torch.BoolTensor(input_ids.shape[:2]).fill_(True)
                 )
                 for i, (token, size) in enumerate(zip(tokens, sizes)):
                     token = torch.tensor(token, dtype=torch.float)
@@ -241,7 +242,7 @@ class SentimentDataset(Dataset):
                         input_ids[i] = torch.cat(
                             [token, token.new_full((-diff, channel), 0.0)]
                         )
-                        attention_mask[i, diff:] = True
+                        attention_mask[i, diff:] = False
                     else:
                         input_ids[i] = self.crop_to_max_size(token, target_size)
             else:
@@ -279,7 +280,7 @@ class SentimentDataset(Dataset):
             if channel:
                 add_input_ids = torch.zeros(len(add_tokens), target_size, channel)
                 add_attention_mask = (
-                    torch.BoolTensor(add_input_ids.shape[:2]).fill_(False)
+                    torch.BoolTensor(add_input_ids.shape[:2]).fill_(True)
                 )
                 for i, (add_token, size) in enumerate(zip(add_tokens, sizes)):
                     add_token = torch.tensor(add_token, dtype=torch.float)
@@ -291,7 +292,7 @@ class SentimentDataset(Dataset):
                         add_input_ids[i] = torch.cat(
                             [add_token, add_token.new_full((-diff, channel), 0.0)]
                         )
-                        add_attention_mask[i, diff:] = True
+                        add_attention_mask[i, diff:] = False
                     else:
                         add_input_ids[i] = self.crop_to_max_size(add_token, target_size)
             else:

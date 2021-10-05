@@ -114,6 +114,7 @@ class Word2Vec:
         if self.method == "fasttext-jamo":
             word = jamo_sentence(word)
         return word in self.dictionary.keys()
+    
 
 
 def get_tokenizer(tokenizer_name):
