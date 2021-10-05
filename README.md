@@ -4,6 +4,17 @@ This is pytorch implementation of the paper, "Multi-modal Korean Emotion Recogni
 ## Dataset
 We experiment our model with [`Multi-modal Video Dataset`](https://aihub.or.kr/aidata/137) released from [AIhub](AIhub)
 
+## Pre-trained Model
+We use a lot of pre-trained model to leverage performance with limited resources.
+You can download each pre-trained model to visit their offical repository.
+Please download pre-trained model and put them in some directory to use as a part of our system.
+
+1. [Wav2vec 2.0](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec) : An end-to-end framework for ASR released by Fairseq.
+2. [VQ-wav2vec](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec) : A framework where quantization module is applied to capture patterns in speech.
+3. [HanBERT](https://github.com/monologg/HanBert-Transformers) : Korean BERT Model pre-trained with Korean WIKI and Book corpus.
+4. [FastText](https://github.com/ratsgo/embedding) : Word Embedding which is trained with Korean WIKI dataset.
+
+
 ## Install
 ### 1. Docker
 We support `Dockerfile` to build virtual environment to run our system.
