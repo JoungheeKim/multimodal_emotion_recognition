@@ -80,18 +80,39 @@ bash script/speech_to_text/run_kakao.sh
 ```bash
 bash script/preprocess/preprocess.sh
 ```
+## Train Single Model
+```bash
+## Run Transformer Model with MFCC audio feature
+bash script/train/kakao/only_audio_mfcc.sh
 
-## Train Multi modal
+## Run Transformer Model with FastText text feature
+bash script/train/kakao/only_text_mfcc.sh
+
+## Run Transformer Model with HanBERT
+bash script/train/kakao/only_text_bert.sh
+```
+
+## Train Multi-modal Model
 We support diverse multi-modal model.
 You can find details in our paper.
+
+### Train with Original Text
+```bash
+## run Shallow fusion model with MFCC and fasttext
+bash script/train/kakao/multi_mfcc_fasttext
+
+## run Shallow fusion model with wav2vec 2.0 and hanbert
+bash script/train/kakao/multimodal_wav2vec_bert_text.sh
+```
+
+### Train with STT Text
 ```bash
 ## run Shallow fusion model with wav2vec 2.0 and hanbert
+bash script/train/kakao/multimodal_wav2vec_bert_stt.sh
+```
 
-
-## run Multi-modal model with wav2vec 2.0 and hanbert
-
-
-## run Deep fusion model with wav2vec 2.0 and hanbert
-
-
+### Train with Consistency Regularization
+```bash
+## run Shallow fusion model with wav2vec 2.0 and hanbert
+bash script/train/kakao/multimodal_wav2vec_bert_kl.sh
 ```
