@@ -1,55 +1,48 @@
-# multimodal emotion_recognition
-This is pytorch implementation of 
+# Multi-modal Korean Emotion Recognition with consistency regularization
+This is pytorch implementation of the paper, "Multi-modal Korean Emotion Recognition with consistency regularization" which is applied to [Korean Institute of Industrial Engineers(KIIE)](http://kiie.org/).
 
-# 설치방법
-## Docker 사용
-- 파일 : Dockerfile
-- Build 명령어 : 
-```bash
-## 이미지 생성
-docker build -t $image_name --build-arg UNAME=$(whoami) --build-arg UID=$(id -u) --build-arg GID=$(id -g) .
+## Install
+### Docker
+We support `Dockerfile` to build virtual environment to run our system.
 
-## 컨테이너 생성(GPU는 한개에서만 테스트 했음)
-docker run --gpus '"device=0"' -td --ipc=host --name 콘테이너이름 -v 로컬위치:/code/gitRepo -v 로컬위치:/code/data -v /etc/passwd:/etc/passwd -p 8889 -p 6006:6006 이미지
-
-## 김탁영 컨테이너 생성
-docker run --gpus '"device=0"' -td --ipc=host --name sentiment_speech -v /home/youngerous/repo:/code/gitRepo -v /hdd/data:/code/data -v /etc/passwd:/etc/passwd -p 9000:9000 tak/base
-```
-
-## Fairseq 설치
+### Fairseq Install
+Our system use Wav2vec 2.0 released by `fairseq`.
+Therefore, it is necessary to install fairseq system before install our system.
 ```bash
 git clone https://github.com/pytorch/fairseq
 cd fairseq
 pip install --editable ./
 ```
-## 기본 파일 설치
+
+### Basic Requirement
 ```bash
-## OS 파일
+## OS Library for audio
 apt-get install libsndfile1-dev
-## Python 라이브러리
+
+## Python Library
 pip install librosa
-
-## Python version에 따라 설치(python version이 3.6.0일때)
-## https://github.com/pytorch/audio 참조
-pip install torchaudio==0.7.2
-
 pip install pydub
 pip install konlpy
 pip install soynlp
 pip install conformer
 pip install transformers
+
+
+## install torchaudio following the insturction(https://github.com/pytorch/audio)
+## make sure it is right version to your pytorch library
+pip install torchaudio==0.7.2
 ```
 
-## Sentiment Speech 설치
+### Sentiment Speech Install
+Install 
 ```bash
 python setup.py develop
 ```
 
-
-# Environment
+### Environment
 - requirement.txt 참고
 
-# preprocessing
+### preprocessing
 - `./src/configs/iemocap_preproc.yaml`
     - use_bert: True: 텍스트모덜 벡터로 BERT last encoder layer 사용, 아니면 glove vectors사용
     - use_wav2vec2: 오디오모덜 벡터로 Wav2vec2.0 last encoder layer 사용, 아니면 MFCC vectors사용
