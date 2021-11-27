@@ -1,0 +1,9 @@
+defaults:
+  - base: train
+  - audio_feature: mfcc
+  - language_feature : raw
+  - model: wav2keyword
+  - split: three
+  - label: five
+
+

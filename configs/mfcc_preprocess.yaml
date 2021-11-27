@@ -1,0 +1,15 @@
+# for wav2vec
+wav2vec_path : None
+
+# for mfcc
+n_fft_size : 400
+n_mfcc : 80
+sample_rate : 16000
+
+# for label
+label_list : ["neu", "hap", "sad", "ang"]
+selected_columns : ['1번 감정', '2번 감정', '3번 감정', '4번 감정', '5번 감정']
+selected_class : ['Angry', 'Disgust', 'Fear', 'Happiness', 'Neutral', 'Sadness', 'Surprise']
+
+# split ratio
+test_ratio : 0.2

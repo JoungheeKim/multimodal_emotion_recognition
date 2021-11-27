@@ -1,0 +1,3 @@
+defaults:
+  - base: api
+  - api: clova

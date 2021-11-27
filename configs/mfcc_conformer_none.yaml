@@ -1,0 +1,31 @@
+# for wav2vec
+audio_model :
+  _name : conformer
+  hidden_dim : 768
+  head_dim : 10
+  head_num : 4
+  ff_mult : 4
+  attn_dropout: 0.1
+  ff_dropout : 0.1
+  conv_dropout : 0.1
+  final_dropout : 0.1
+
+audio_feature :
+  _name : mfcc
+  wav2vec_path : None
+  n_fft_size: 400
+  n_mfcc: 80
+  sample_rate: 16000
+
+language_model :
+  _name : None
+
+
+
+# for label
+label_list : "['neu', 'hap', 'sad', 'ang']"
+selected_columns : "['1번 감정', '2번 감정', '3번 감정', '4번 감정', '5번 감정']"
+selected_class : "['Angry', 'Disgust', 'Fear', 'Happiness', 'Neutral', 'Sadness', 'Surprise']"
+
+# split ratio
+test_ratio : 0.2

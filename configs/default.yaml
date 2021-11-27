@@ -1,0 +1,4 @@
+defaults:
+  - audio_model: conformer
+  - audio_feature: mfcc
+  - base: train
